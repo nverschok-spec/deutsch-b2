@@ -59,11 +59,9 @@ export const useGermanStore = create()(
           onboardingCompleted: state.settings.onboardingCompleted,
           level: state.settings.level,
           fachbereich: state.settings.fachbereich,
-          pinHash: state.settings.pinHash,
-          recoveryQuestion: state.settings.recoveryQuestion,
-          recoveryAnswerHash: state.settings.recoveryAnswerHash,
+          pinAttemptLocked: state.settings.pinAttemptLocked,
           // isUnlocked НЕ персистится намеренно — каждый холодный старт
-          // снова требует PIN, если он задан (см. createSettingsSlice.js).
+          // снова требует PIN (см. createSettingsSlice.js).
         },
         briefing: {
           date: state.briefing.date,

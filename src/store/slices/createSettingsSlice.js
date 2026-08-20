@@ -1,11 +1,19 @@
-import { sha256Hex, normalizeAnswer } from '../../utils/hash.js';
+import { sha256Hex } from '../../utils/hash.js';
 
 // Settings-слайс: пользовательские настройки, общие для всех модулей.
 // Держим тут difficulty (B1/B2 регулировка для UmschulungSimulator и B2Upgrader),
 // голосовые опции, профиль обучения (как ИИ должен вести себя в промптах),
 // язык интерфейса и мягкую PIN-защиту (см. README — это client-only PWA без
 // бэкенда, поэтому PIN не настоящая безопасность, а щит от случайного человека,
-// взявшего телефон; сбрасывается через секретный вопрос или очистку данных сайта).
+// взявшего телефон).
+//
+// PIN — один фиксированный код на всех, зашит в коде (не настраивается через
+// UI намеренно: нет самостоятельного сброса/восстановления — "не хочу, чтобы
+// кто попало зашёл" важнее удобства смены пароля). Хэш, а не открытый текст,
+// просто чтобы код 202219 не лежал в бандле буквально — но это всё равно
+// клиентский код, так что это не защита от reverse-engineering, а щит от
+// случайного взгляда через DevTools.
+const FIXED_PIN_HASH = 'a39cde4bba50a324fce1dddddc01b75c1e7cf5084d202ce97e63272c882c22df'; // sha256("202219")
 
 export const createSettingsSlice = (set, get) => ({
   settings: {
@@ -31,13 +39,13 @@ export const createSettingsSlice = (set, get) => ({
     level: null, // 'A2' | 'A2-B1' | 'B1' | 'B1-B2' | 'B2'
     fachbereich: '', // напр. "IT", "Pflege" — свободный текст из онбординга
 
-    // PIN — хэши, не сырой текст. isUnlocked НЕ персистится (см. partialize
-    // в useGermanStore.js), поэтому после каждого холодного старта приложение
-    // снова заблокировано, если pinHash задан.
-    pinHash: null,
-    recoveryQuestion: '',
-    recoveryAnswerHash: null,
+    // isUnlocked НЕ персистится (см. partialize в useGermanStore.js), поэтому
+    // после каждого холодного старта приложение снова заблокировано.
     isUnlocked: false,
+    // После одной неверной попытки дальнейший ввод PIN блокируется — без
+    // самостоятельного восстановления (см. комментарий у FIXED_PIN_HASH).
+    // Персистится, чтобы обход через простой reload не работал.
+    pinAttemptLocked: false,
 
     setDifficulty: (difficulty) => set((state) => ({ settings: { ...state.settings, difficulty } })),
     setVoiceEnabled: (voiceEnabled) => set((state) => ({ settings: { ...state.settings, voiceEnabled } })),
@@ -62,28 +70,11 @@ export const createSettingsSlice = (set, get) => ({
       })),
     resetOnboarding: () => set((state) => ({ settings: { ...state.settings, onboardingCompleted: false } })),
 
-    setPin: async (pin, recoveryQuestion, recoveryAnswer) => {
-      const pinHash = await sha256Hex(pin);
-      const recoveryAnswerHash = await sha256Hex(normalizeAnswer(recoveryAnswer));
-      set((state) => ({
-        settings: { ...state.settings, pinHash, recoveryQuestion, recoveryAnswerHash, isUnlocked: true },
-      }));
-    },
-    removePin: () => set((state) => ({ settings: { ...state.settings, pinHash: null, recoveryQuestion: '', recoveryAnswerHash: null, isUnlocked: true } })),
     tryUnlock: async (pin) => {
+      if (get().settings.pinAttemptLocked) return false;
       const hash = await sha256Hex(pin);
-      const ok = hash === get().settings.pinHash;
-      if (ok) set((state) => ({ settings: { ...state.settings, isUnlocked: true } }));
-      return ok;
-    },
-    tryRecoverWithAnswer: async (answer) => {
-      const hash = await sha256Hex(normalizeAnswer(answer));
-      const ok = hash === get().settings.recoveryAnswerHash;
-      if (ok) {
-        set((state) => ({
-          settings: { ...state.settings, pinHash: null, recoveryQuestion: '', recoveryAnswerHash: null, isUnlocked: true },
-        }));
-      }
+      const ok = hash === FIXED_PIN_HASH;
+      set((state) => ({ settings: { ...state.settings, isUnlocked: ok, pinAttemptLocked: ok ? false : true } }));
       return ok;
     },
   },

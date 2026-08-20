@@ -1,25 +1,22 @@
-import { useState } from 'react';
 import Card from '../common/Card.jsx';
-import { PrimaryButton, SecondaryButton } from '../common/Button.jsx';
+import { SecondaryButton } from '../common/Button.jsx';
 import { useGermanStore } from '../../store/useGermanStore.js';
 import { useT } from '../../utils/i18n.js';
 import { buildPlan } from '../../utils/plan.js';
-import PinSetupForm from '../PinLock/PinSetupForm.jsx';
 
 const FOCUS_OPTIONS = ['balanced', 'grammar', 'vocab', 'speaking'];
 const STRICTNESS_OPTIONS = ['gentle', 'balanced', 'strict'];
 const TONE_OPTIONS = ['friendly', 'professional'];
 
 // Settings — язык интерфейса, профиль обучения (уходит в system-промпты
-// api/claude.js), сводка плана из онбординга, управление PIN.
+// api/claude.js), сводка плана из онбординга. PIN тут не настраивается —
+// он один фиксированный на всё приложение (см. createSettingsSlice.js).
 export default function Settings() {
   const t = useT();
   const settings = useGermanStore((s) => s.settings);
   const setUiLanguage = useGermanStore((s) => s.settings.setUiLanguage);
   const setTeachingProfile = useGermanStore((s) => s.settings.setTeachingProfile);
   const resetOnboarding = useGermanStore((s) => s.settings.resetOnboarding);
-  const removePin = useGermanStore((s) => s.settings.removePin);
-  const [pinFormOpen, setPinFormOpen] = useState(false);
 
   const plan = settings.level ? buildPlan({ level: settings.level, fachbereich: settings.fachbereich }) : null;
 
@@ -110,27 +107,6 @@ export default function Settings() {
           </SecondaryButton>
         </Card>
       )}
-
-      <Card>
-        <h2 className="text-sm font-bold text-white mb-3">{t('settings.pinSection')}</h2>
-        {pinFormOpen ? (
-          <PinSetupForm onDone={() => setPinFormOpen(false)} onCancel={() => setPinFormOpen(false)} />
-        ) : (
-          <div className="flex flex-col gap-3">
-            <p className="text-sm text-slate-400">{settings.pinHash ? t('settings.pinSet') : t('settings.pinNotSet')}</p>
-            <div className="flex gap-2">
-              <PrimaryButton onClick={() => setPinFormOpen(true)} className="flex-1 text-sm">
-                {settings.pinHash ? t('settings.changePin') : t('settings.setPin')}
-              </PrimaryButton>
-              {settings.pinHash && (
-                <SecondaryButton onClick={removePin} className="flex-1 text-sm">
-                  {t('settings.removePin')}
-                </SecondaryButton>
-              )}
-            </div>
-          </div>
-        )}
-      </Card>
     </div>
   );
 }

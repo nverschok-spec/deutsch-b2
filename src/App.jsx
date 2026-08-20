@@ -10,7 +10,6 @@ import VocabTrainer from './components/VocabTrainer/VocabTrainer.jsx';
 import Settings from './components/Settings/Settings.jsx';
 import Onboarding from './components/Onboarding/Onboarding.jsx';
 import PinLock from './components/PinLock/PinLock.jsx';
-import MandatoryPinSetup from './components/PinLock/MandatoryPinSetup.jsx';
 import VoiceInputBar from './components/UmschulungSimulator/VoiceInputBar.jsx';
 import { useGermanStore } from './store/useGermanStore.js';
 import { useT } from './utils/i18n.js';
@@ -27,19 +26,17 @@ const TAB_KEYS = {
 // полноэкранные модули, переключаются BottomNav. VoiceInputBar виден на
 // всех вкладках, зафиксирован снизу вместе с BottomNav в общем .bottom-dock.
 //
-// Перед основным приложением — три возможных гейта (App-уровня, не роуты),
-// в этом порядке: MandatoryPinSetup (самый первый запуск — без PIN дальше
-// хода нет, см. запрос "не хочу, чтобы кто попало зашёл"), PinLock (каждый
-// последующий холодный старт, пока не введён верный PIN), и только потом
-// Onboarding (один раз, пока !settings.onboardingCompleted).
+// Перед основным приложением — два возможных гейта (App-уровня, не роуты):
+// PinLock (каждый холодный старт, пока не введён верный PIN — см.
+// createSettingsSlice.js: один фиксированный PIN, без самостоятельного
+// сброса — "не хочу, чтобы кто попало зашёл") и только потом Onboarding
+// (один раз, пока !settings.onboardingCompleted).
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const t = useT();
   const onboardingCompleted = useGermanStore((s) => s.settings.onboardingCompleted);
-  const pinHash = useGermanStore((s) => s.settings.pinHash);
   const isUnlocked = useGermanStore((s) => s.settings.isUnlocked);
 
-  if (!pinHash) return <MandatoryPinSetup />;
   if (!isUnlocked) return <PinLock />;
   if (!onboardingCompleted) return <Onboarding />;
 
