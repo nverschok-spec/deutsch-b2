@@ -31,7 +31,7 @@ export const createProgressSlice = (set, get) => ({
         progress: { ...state.progress, conversationSeconds: state.progress.conversationSeconds + seconds },
       })),
 
-    /** @param {number} amount @param {'briefing'|'upgrader'|'grammar'|'vocab'|'simulator'} module */
+    /** @param {number} amount @param {'briefing'|'upgrader'|'grammar'|'vocab'|'simulator'|'lesson'} module */
     addXp: (amount, module) =>
       set((state) => {
         const now = Date.now();

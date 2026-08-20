@@ -10,6 +10,8 @@ import VocabTrainer from './components/VocabTrainer/VocabTrainer.jsx';
 import Settings from './components/Settings/Settings.jsx';
 import Onboarding from './components/Onboarding/Onboarding.jsx';
 import PinLock from './components/PinLock/PinLock.jsx';
+import TodayCard from './components/DailyLesson/TodayCard.jsx';
+import DailyLesson from './components/DailyLesson/DailyLesson.jsx';
 import VoiceInputBar from './components/UmschulungSimulator/VoiceInputBar.jsx';
 import { useGermanStore } from './store/useGermanStore.js';
 import { useT } from './utils/i18n.js';
@@ -22,9 +24,12 @@ const TAB_KEYS = {
 };
 
 // Dashboard — один скроллящийся экран (см. макет: три скриншота — это три
-// положения скролла одной страницы). Grammar/Karten/Settings — отдельные
-// полноэкранные модули, переключаются BottomNav. VoiceInputBar виден на
-// всех вкладках, зафиксирован снизу вместе с BottomNav в общем .bottom-dock.
+// положения скролла одной страницы), сверху — TodayCard (единственная точка
+// входа в пошаговый DailyLesson, привязанный к плану из онбординга — до этого
+// план показывался один раз и ни на что не влиял). Grammar/Karten/Settings —
+// отдельные полноэкранные модули, переключаются BottomNav, для практики
+// сверх плана. VoiceInputBar виден на всех вкладках, зафиксирован снизу
+// вместе с BottomNav в общем .bottom-dock.
 //
 // Перед основным приложением — два возможных гейта (App-уровня, не роуты):
 // PinLock (каждый холодный старт, пока не введён верный PIN — см.
@@ -33,12 +38,14 @@ const TAB_KEYS = {
 // (один раз, пока !settings.onboardingCompleted).
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [lessonOpen, setLessonOpen] = useState(false);
   const t = useT();
   const onboardingCompleted = useGermanStore((s) => s.settings.onboardingCompleted);
   const isUnlocked = useGermanStore((s) => s.settings.isUnlocked);
 
   if (!isUnlocked) return <PinLock />;
   if (!onboardingCompleted) return <Onboarding />;
+  if (lessonOpen) return <DailyLesson onClose={() => setLessonOpen(false)} />;
 
   const tabs = Object.fromEntries(
     Object.entries(TAB_KEYS).map(([key, { labelKey, Icon }]) => [key, { label: t(labelKey), Icon }])
@@ -50,6 +57,7 @@ export default function App() {
         <Header />
         {activeTab === 'dashboard' && (
           <>
+            <TodayCard onStart={() => setLessonOpen(true)} />
             <DailyB2Briefing />
             <B2SentenceUpgrader />
             <MeinB2Fortschritt />

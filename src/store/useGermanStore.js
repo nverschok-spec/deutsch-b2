@@ -4,6 +4,7 @@ import { createVocabSlice } from './slices/createVocabSlice.js';
 import { createProgressSlice } from './slices/createProgressSlice.js';
 import { createSettingsSlice } from './slices/createSettingsSlice.js';
 import { createBriefingSlice } from './slices/createBriefingSlice.js';
+import { createLessonSlice } from './slices/createLessonSlice.js';
 
 // Архитектура стора
 // -----------------
@@ -33,6 +34,7 @@ export const useGermanStore = create()(
       ...createProgressSlice(...a),
       ...createSettingsSlice(...a),
       ...createBriefingSlice(...a),
+      ...createLessonSlice(...a),
     }),
     {
       name: 'deutsch-b2-store', // ключ в localStorage
@@ -69,6 +71,9 @@ export const useGermanStore = create()(
           quizCompletedToday: state.briefing.quizCompletedToday,
           learnedPhrases: state.briefing.learnedPhrases,
         },
+        lesson: {
+          completedDate: state.lesson.completedDate,
+        },
       }),
       // partialize вырезает методы слайсов (оставляет только данные) — поэтому
       // на регидратации нужен НЕ дефолтный merge. Дефолтный merge зустанда —
@@ -83,6 +88,7 @@ export const useGermanStore = create()(
         progress: { ...currentState.progress, ...persistedState?.progress },
         settings: { ...currentState.settings, ...persistedState?.settings },
         briefing: { ...currentState.briefing, ...persistedState?.briefing },
+        lesson: { ...currentState.lesson, ...persistedState?.lesson },
       }),
       // migrate: (persistedState, version) => persistedState,
       // ^ сюда добавляем миграции, когда меняется форма стора между релизами

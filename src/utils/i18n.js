@@ -93,6 +93,32 @@ const STRINGS = {
   'briefing.retry': { ru: 'Не удалось загрузить — повторить', de: 'Laden fehlgeschlagen — erneut versuchen' },
   'briefing.nvOfDay': { ru: 'Nomen-Verb-Verbindung des Tages', de: 'Nomen-Verb-Verbindung des Tages' },
   'briefing.showTranslation': { ru: 'Показать перевод', de: 'Übersetzung anzeigen' },
+
+  'today.title': { ru: 'Сегодня', de: 'Heute' },
+  'today.focus': { ru: 'В фокусе', de: 'Im Fokus' },
+  'today.start': { ru: 'Начать урок', de: 'Lektion starten' },
+  'today.done': { ru: 'Урок пройден', de: 'Lektion abgeschlossen' },
+  'today.doneHint': { ru: 'Приходи завтра — или позанимайся ещё, сверх плана.', de: 'Komm morgen wieder — oder übe noch mehr, über den Plan hinaus.' },
+  'today.step': { ru: 'Шаг', de: 'Schritt' },
+  'today.close': { ru: 'Закрыть', de: 'Schließen' },
+  'today.next': { ru: 'Дальше', de: 'Weiter' },
+  'today.finish': { ru: 'Готово', de: 'Fertig' },
+
+  'today.step1.title': { ru: 'Слово дня', de: 'Wort des Tages' },
+  'today.step1.hint': { ru: 'Прочитай и запомни — пригодится в следующих шагах.', de: 'Lies und merke dir das — es hilft in den nächsten Schritten.' },
+
+  'today.step2.title': { ru: 'Апгрейд предложения', de: 'Satz-Upgrade' },
+  'today.step2.hint': { ru: 'Напиши простое предложение — ИИ поднимет его до B2.', de: 'Schreib einen einfachen Satz — die KI hebt ihn auf B2-Niveau.' },
+  'today.step2.placeholder': { ru: 'напр. Ich habe viel Arbeit.', de: 'z. B. Ich habe viel Arbeit.' },
+  'today.step2.upgrade': { ru: 'Улучшить', de: 'Verbessern' },
+
+  'today.step3.title': { ru: 'Короткий диалог', de: 'Kurzer Dialog' },
+  'today.step3.hint': { ru: 'Одна реплика по сценарию из настроек.', de: 'Eine Antwort im Szenario aus den Einstellungen.' },
+  'today.step3.placeholder': { ru: 'Напиши реплику на немецком...', de: 'Schreib eine Antwort auf Deutsch...' },
+  'today.step3.send': { ru: 'Отправить', de: 'Senden' },
+
+  'today.step4.title': { ru: 'День засчитан 🎉', de: 'Tag erledigt 🎉' },
+  'today.step4.hint': { ru: '+10 XP, серия дней продолжается.', de: '+10 XP, deine Serie geht weiter.' },
 };
 
 export function t(key, lang) {
