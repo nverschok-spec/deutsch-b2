@@ -30,6 +30,7 @@ const STRINGS = {
   'cards.hard': { ru: 'Сложно', de: 'Schwer' },
   'cards.easy': { ru: 'Легко', de: 'Leicht' },
   'cards.error': { ru: 'Не получилось добавить слово. Попробуй ещё раз.', de: 'Wort konnte nicht hinzugefügt werden.' },
+  'cards.exportAnki': { ru: 'Экспорт в Anki ⇩', de: 'Nach Anki exportieren ⇩' },
 
   'wortschatz.title': { ru: 'Словарные карточки', de: 'Wortschatz-Karten' },
   'wortschatz.empty': { ru: 'Пока нет слов — добавь первое.', de: 'Noch keine Wörter — füge das erste hinzu.' },
@@ -65,6 +66,8 @@ const STRINGS = {
   'settings.tone.professional': { ru: 'Деловой', de: 'Professionell' },
   'settings.myPlan': { ru: 'Мой план', de: 'Mein Plan' },
   'settings.retakeTest': { ru: 'Пройти тест заново', de: 'Test wiederholen' },
+  'settings.reminders': { ru: 'Напоминания', de: 'Erinnerungen' },
+  'settings.remindersHint': { ru: 'Напомнить, если урок дня не пройден (пока приложение открыто).', de: 'Erinnert dich, falls die Tageslektion noch offen ist (solange die App geöffnet ist).' },
 
   'pin.lockedOut': {
     ru: 'Неверный PIN. Ввод заблокирован.',
@@ -119,6 +122,25 @@ const STRINGS = {
 
   'today.step4.title': { ru: 'День засчитан 🎉', de: 'Tag erledigt 🎉' },
   'today.step4.hint': { ru: '+10 XP, серия дней продолжается.', de: '+10 XP, deine Serie geht weiter.' },
+
+  'weakspots.title': { ru: 'Слабые места', de: 'Schwachstellen' },
+  'weakspots.hint': { ru: 'Темы, где ИИ чаще всего тебя поправляет.', de: 'Themen, bei denen die KI dich am häufigsten korrigiert.' },
+
+  'weekly.title': { ru: 'Неделя в цифрах', de: 'Die Woche in Zahlen' },
+  'weekly.loading': { ru: 'Считаю итоги недели…', de: 'Berechne die Wochenbilanz…' },
+  'weekly.error': { ru: 'Не удалось составить дайджест.', de: 'Wochenbilanz konnte nicht erstellt werden.' },
+
+  'interview.cardTitle': { ru: 'Мок-собеседование', de: 'Probe-Vorstellungsgespräch' },
+  'interview.cardHint': { ru: 'Полная сессия на 5+ реплик с разбором в конце — как перед настоящим собеседованием.', de: 'Eine volle Sitzung mit 5+ Antworten und Feedback am Ende — wie vor einem echten Gespräch.' },
+  'interview.cardStart': { ru: 'Начать собеседование', de: 'Gespräch starten' },
+  'interview.title': { ru: 'Мок-собеседование', de: 'Probe-Vorstellungsgespräch' },
+  'interview.intro': { ru: 'Напиши первую реплику — ИИ начнёт собеседование.', de: 'Schreib die erste Antwort — die KI beginnt das Gespräch.' },
+  'interview.finish': { ru: 'Завершить и получить отзыв', de: 'Beenden und Feedback erhalten' },
+  'interview.finishing': { ru: 'Готовлю отзыв…', de: 'Erstelle Feedback…' },
+  'interview.feedbackError': { ru: 'Не удалось получить отзыв. Попробуй ещё раз.', de: 'Feedback konnte nicht geladen werden.' },
+  'interview.feedbackTitle': { ru: 'Разбор собеседования', de: 'Gesprächs-Feedback' },
+  'interview.strengths': { ru: 'Сильные стороны', de: 'Stärken' },
+  'interview.improvements': { ru: 'Что подтянуть', de: 'Verbesserungspotenzial' },
 };
 
 export function t(key, lang) {

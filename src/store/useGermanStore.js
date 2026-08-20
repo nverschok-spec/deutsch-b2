@@ -5,6 +5,8 @@ import { createProgressSlice } from './slices/createProgressSlice.js';
 import { createSettingsSlice } from './slices/createSettingsSlice.js';
 import { createBriefingSlice } from './slices/createBriefingSlice.js';
 import { createLessonSlice } from './slices/createLessonSlice.js';
+import { createWeakSpotsSlice } from './slices/createWeakSpotsSlice.js';
+import { createWeeklyDigestSlice } from './slices/createWeeklyDigestSlice.js';
 
 // Архитектура стора
 // -----------------
@@ -35,6 +37,8 @@ export const useGermanStore = create()(
       ...createSettingsSlice(...a),
       ...createBriefingSlice(...a),
       ...createLessonSlice(...a),
+      ...createWeakSpotsSlice(...a),
+      ...createWeeklyDigestSlice(...a),
     }),
     {
       name: 'deutsch-b2-store', // ключ в localStorage
@@ -56,6 +60,8 @@ export const useGermanStore = create()(
           ttsRate: state.settings.ttsRate,
           dialogueScenario: state.settings.dialogueScenario,
           dailyReminderTime: state.settings.dailyReminderTime,
+          notificationsEnabled: state.settings.notificationsEnabled,
+          lastReminderShownDate: state.settings.lastReminderShownDate,
           uiLanguage: state.settings.uiLanguage,
           teachingProfile: state.settings.teachingProfile,
           onboardingCompleted: state.settings.onboardingCompleted,
@@ -74,6 +80,13 @@ export const useGermanStore = create()(
         lesson: {
           completedDate: state.lesson.completedDate,
         },
+        weakSpots: {
+          counts: state.weakSpots.counts,
+        },
+        weeklyDigest: {
+          weekStart: state.weeklyDigest.weekStart,
+          data: state.weeklyDigest.data,
+        },
       }),
       // partialize вырезает методы слайсов (оставляет только данные) — поэтому
       // на регидратации нужен НЕ дефолтный merge. Дефолтный merge зустанда —
@@ -89,6 +102,8 @@ export const useGermanStore = create()(
         settings: { ...currentState.settings, ...persistedState?.settings },
         briefing: { ...currentState.briefing, ...persistedState?.briefing },
         lesson: { ...currentState.lesson, ...persistedState?.lesson },
+        weakSpots: { ...currentState.weakSpots, ...persistedState?.weakSpots },
+        weeklyDigest: { ...currentState.weeklyDigest, ...persistedState?.weeklyDigest },
       }),
       // migrate: (persistedState, version) => persistedState,
       // ^ сюда добавляем миграции, когда меняется форма стора между релизами

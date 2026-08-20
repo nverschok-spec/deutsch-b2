@@ -4,7 +4,9 @@ import BottomNav, { DashboardIcon, GrammarIcon, CardsIcon, SettingsIcon } from '
 import DailyB2Briefing from './components/DailyB2Briefing/DailyB2Briefing.jsx';
 import B2SentenceUpgrader from './components/B2SentenceUpgrader/B2SentenceUpgrader.jsx';
 import MeinB2Fortschritt from './components/MeinB2Fortschritt/MeinB2Fortschritt.jsx';
+import WeakSpotsCard from './components/MeinB2Fortschritt/WeakSpotsCard.jsx';
 import WortschatzKarten from './components/WortschatzKarten/WortschatzKarten.jsx';
+import WeeklyDigestCard from './components/WeeklyDigest/WeeklyDigestCard.jsx';
 import SmartGrammarLab from './components/SmartGrammarLab/SmartGrammarLab.jsx';
 import VocabTrainer from './components/VocabTrainer/VocabTrainer.jsx';
 import Settings from './components/Settings/Settings.jsx';
@@ -12,9 +14,12 @@ import Onboarding from './components/Onboarding/Onboarding.jsx';
 import PinLock from './components/PinLock/PinLock.jsx';
 import TodayCard from './components/DailyLesson/TodayCard.jsx';
 import DailyLesson from './components/DailyLesson/DailyLesson.jsx';
+import MockInterviewCard from './components/MockInterview/MockInterviewCard.jsx';
+import MockInterview from './components/MockInterview/MockInterview.jsx';
 import VoiceInputBar from './components/UmschulungSimulator/VoiceInputBar.jsx';
 import { useGermanStore } from './store/useGermanStore.js';
 import { useT } from './utils/i18n.js';
+import { useDailyReminder } from './hooks/useDailyReminder.js';
 
 const TAB_KEYS = {
   dashboard: { labelKey: 'nav.dashboard', Icon: DashboardIcon },
@@ -39,13 +44,16 @@ const TAB_KEYS = {
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [lessonOpen, setLessonOpen] = useState(false);
+  const [interviewOpen, setInterviewOpen] = useState(false);
   const t = useT();
   const onboardingCompleted = useGermanStore((s) => s.settings.onboardingCompleted);
   const isUnlocked = useGermanStore((s) => s.settings.isUnlocked);
+  useDailyReminder();
 
   if (!isUnlocked) return <PinLock />;
   if (!onboardingCompleted) return <Onboarding />;
   if (lessonOpen) return <DailyLesson onClose={() => setLessonOpen(false)} />;
+  if (interviewOpen) return <MockInterview onClose={() => setInterviewOpen(false)} />;
 
   const tabs = Object.fromEntries(
     Object.entries(TAB_KEYS).map(([key, { labelKey, Icon }]) => [key, { label: t(labelKey), Icon }])
@@ -61,6 +69,9 @@ export default function App() {
             <DailyB2Briefing />
             <B2SentenceUpgrader />
             <MeinB2Fortschritt />
+            <WeakSpotsCard />
+            <WeeklyDigestCard />
+            <MockInterviewCard onStart={() => setInterviewOpen(true)} />
             <WortschatzKarten />
           </>
         )}

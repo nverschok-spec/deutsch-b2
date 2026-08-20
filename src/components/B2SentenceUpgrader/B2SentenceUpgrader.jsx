@@ -15,6 +15,7 @@ export default function B2SentenceUpgrader() {
   const [status, setStatus] = useState('idle'); // idle | loading | error
   const [showDetails, setShowDetails] = useState(false);
   const addXp = useGermanStore((s) => s.progress.addXp);
+  const recordTopic = useGermanStore((s) => s.weakSpots.recordTopic);
   const t = useT();
 
   async function handleUpgrade() {
@@ -25,6 +26,7 @@ export default function B2SentenceUpgrader() {
     try {
       const data = await askClaude('upgradeSentence', { sentence: input.trim() });
       setResult(data);
+      data.changes?.forEach((change) => recordTopic(change.topic));
       setStatus('idle');
       addXp(5, 'upgrader');
     } catch (err) {

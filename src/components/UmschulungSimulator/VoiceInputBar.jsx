@@ -23,6 +23,7 @@ export default function VoiceInputBar() {
   const setDialogueScenario = useGermanStore((s) => s.settings.setDialogueScenario);
   const addXp = useGermanStore((s) => s.progress.addXp);
   const addConversationSeconds = useGermanStore((s) => s.progress.addConversationSeconds);
+  const recordTopic = useGermanStore((s) => s.weakSpots.recordTopic);
 
   const [text, setText] = useState('');
   const [lastReply, setLastReply] = useState(null); // { text, correction, hint }
@@ -60,6 +61,7 @@ export default function VoiceInputBar() {
       });
       setLastReply(data);
       if (settings.voiceEnabled) speak(data.reply, { lang: settings.voiceLang, rate: settings.ttsRate });
+      if (data.correction) recordTopic(data.correctionTopic);
       addXp(3, 'simulator');
       setStatus('idle');
     } catch (err) {

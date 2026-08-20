@@ -22,7 +22,9 @@ export const createSettingsSlice = (set, get) => ({
     voiceLang: 'de-DE',
     ttsRate: 1.0, // скорость озвучки ответов ИИ в симуляторе диалогов
     dialogueScenario: 'interview', // 'interview' | 'colleague' | 'jobcenter' | 'professional'
-    dailyReminderTime: '08:00', // локальное напоминание для DailyB2Briefing (через Notification API)
+    dailyReminderTime: '08:00', // во сколько показывать напоминание (локальное время устройства)
+    notificationsEnabled: false, // см. hooks/useDailyReminder.js — best-effort, не настоящий push
+    lastReminderShownDate: null, // 'YYYY-MM-DD' — чтобы не показать напоминание дважды за день
 
     uiLanguage: 'ru', // 'ru' | 'de' — язык интерфейса (не влияет на немецкий учебный контент)
 
@@ -52,6 +54,9 @@ export const createSettingsSlice = (set, get) => ({
     setDialogueScenario: (dialogueScenario) => set((state) => ({ settings: { ...state.settings, dialogueScenario } })),
     setTtsRate: (ttsRate) => set((state) => ({ settings: { ...state.settings, ttsRate } })),
     setDailyReminderTime: (dailyReminderTime) => set((state) => ({ settings: { ...state.settings, dailyReminderTime } })),
+    setNotificationsEnabled: (notificationsEnabled) => set((state) => ({ settings: { ...state.settings, notificationsEnabled } })),
+    markReminderShownToday: () =>
+      set((state) => ({ settings: { ...state.settings, lastReminderShownDate: new Date().toISOString().slice(0, 10) } })),
 
     setUiLanguage: (uiLanguage) => set((state) => ({ settings: { ...state.settings, uiLanguage } })),
 

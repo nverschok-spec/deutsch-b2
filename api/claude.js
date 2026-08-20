@@ -47,8 +47,11 @@ Der Nutzer schreibt einen einfachen Satz (A2/B1). Deine Aufgabe:
 1) Formuliere ihn auf B2-Niveau um — nutze wo passend: Nomen-Verb-Verbindungen,
    Passiv/Zustandspassiv, Konjunktiv II, Nebensätze (obwohl, dadurch dass, je... desto).
 2) Erkläre knapp, WAS sich geändert hat und WARUM es professioneller klingt.
+3) Gib für jede Änderung ein kurzes Grammatik-/Wortschatz-Tag (z.B. "Konjunktiv II",
+   "Passiv", "Nomen-Verb-Verbindung", "Nebensatz", "Wortschatz") — wird genutzt,
+   um wiederkehrende Schwachstellen des Lerners zu tracken.
 ${teachingNote(payload)}
-Antworte ausschließlich als JSON: { "upgraded": string, "changes": [{ "original": string, "improved": string, "explanationRu": string }] }`,
+Antworte ausschließlich als JSON: { "upgraded": string, "changes": [{ "original": string, "improved": string, "explanationRu": string, "topic": string }] }`,
   },
   grammarAnalysis: {
     system: (payload) => `Du bist ein Grammatik-Analysewerkzeug für Deutschlerner auf B2-Niveau.
@@ -63,8 +66,11 @@ Antworte ausschließlich als JSON:
 Der Modus wird im payload.scenario übergeben (Vorstellungsgespräch / Kollegengespräch / Jobcenter / Fachthema).
 Antworte auf Deutsch in der eingestellten Schwierigkeit (payload.difficulty: B1|B2).
 Falls die letzte Nutzeräußerung Grammatikfehler enthält, korrigiere sie kurz, dann führe den Dialog fort.
+Falls korrigiert wurde, gib zusätzlich ein kurzes Grammatik-Tag für den Fehlertyp
+(z.B. "Wortstellung", "Präpositionen", "Kasus", "Konjunktiv II") — wird genutzt,
+um wiederkehrende Schwachstellen des Lerners zu tracken.
 ${teachingNote(payload)}
-Antworte ausschließlich als JSON: { "reply": string, "correction": string|null, "hint": string|null }`,
+Antworte ausschließlich als JSON: { "reply": string, "correction": string|null, "correctionTopic": string|null, "hint": string|null }`,
   },
   vocabEnrich: {
     system: () => `Du reicherst ein deutsches Wort für eine Vokabelkarte an (Zielniveau B2, Kontext: Umschulung/Fachsprache).
@@ -79,6 +85,23 @@ Antworte ausschließlich als JSON: { "article": string|null, "plural": string|nu
 eine Nomen-Verb-Verbindung des Tages, und 3 Multiple-Choice-Testfragen (1 Minute Test).
 ${teachingNote(payload)}
 Antworte ausschließlich als JSON: { "wordOfDay": {...}, "nvVerbindung": {...}, "quiz": [...] }`,
+  },
+  interviewFeedback: {
+    system: (payload) => `Du bist Karrierecoach für einen Deutschlerner, der sich auf ein echtes Vorstellungsgespräch
+im Rahmen seiner Umschulung vorbereitet. payload.history enthält den vollständigen Verlauf eines
+simulierten Vorstellungsgesprächs ({ role: 'user'|'ai', text }[]). Bewerte die Antworten des Nutzers:
+sprachliche Qualität (B2-Niveau, Grammatik) UND inhaltliche Überzeugungskraft für ein echtes Gespräch.
+${teachingNote(payload)}
+Antworte ausschließlich als JSON: { "summary": string, "strengths": string[], "improvements": string[] }`,
+  },
+  weeklyDigest: {
+    system: (payload) => `Du bist Lerncoach für einen Deutschlerner (B1→B2, Kontext: Umschulung). payload.stats enthält
+Kennzahlen der letzten 7 Tage (xpThisWeek, daysActiveThisWeek, totalWords), payload.weakSpots die
+häufigsten wiederkehrenden Fehlerthemen ({ topic, count }[], kann leer sein). Schreibe eine kurze,
+motivierende Zusammenfassung der Woche (2-3 Sätze) und einen konkreten, umsetzbaren Fokus für die
+nächste Woche (1 Satz) — falls weakSpots vorhanden, sollte sich der Fokus darauf beziehen.
+${teachingNote(payload)}
+Antworte ausschließlich als JSON: { "summary": string, "nextFocus": string }`,
   },
 };
 

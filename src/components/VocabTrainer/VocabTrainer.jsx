@@ -3,8 +3,9 @@ import Card from '../common/Card.jsx';
 import { PrimaryButton, SecondaryButton } from '../common/Button.jsx';
 import Spinner from '../common/Spinner.jsx';
 import { askClaude } from '../../api/claude.js';
-import { useGermanStore, useDueVocabCards } from '../../store/useGermanStore.js';
+import { useGermanStore, useDueVocabCards, useVocabCards } from '../../store/useGermanStore.js';
 import { useT } from '../../utils/i18n.js';
+import { downloadAnkiExport } from '../../utils/exportAnki.js';
 
 // Модуль 4: добавление слова (ИИ дотягивает артикль/plural/пример) +
 // SRS-повторение карточек, которые "созрели" (см. slices/createVocabSlice.js).
@@ -15,6 +16,7 @@ export default function VocabTrainer() {
   const reviewCard = useGermanStore((s) => s.vocab.reviewCard);
   const addXp = useGermanStore((s) => s.progress.addXp);
   const dueCards = useDueVocabCards();
+  const allCards = useVocabCards();
   const [revealIndex, setRevealIndex] = useState(null);
   const t = useT();
 
@@ -40,9 +42,19 @@ export default function VocabTrainer() {
 
   return (
     <div className="flex flex-col gap-4">
-      <header>
-        <h1 className="text-xl font-bold">{t('cards.title')}</h1>
-        <p className="text-sm text-slate-400">{dueCards.length} {t('cards.dueToday')}</p>
+      <header className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold">{t('cards.title')}</h1>
+          <p className="text-sm text-slate-400">{dueCards.length} {t('cards.dueToday')}</p>
+        </div>
+        {allCards.length > 0 && (
+          <button
+            onClick={() => downloadAnkiExport(allCards)}
+            className="text-xs text-violet-400 underline whitespace-nowrap mt-1"
+          >
+            {t('cards.exportAnki')}
+          </button>
+        )}
       </header>
 
       <Card>

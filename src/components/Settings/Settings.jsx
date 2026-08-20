@@ -17,6 +17,17 @@ export default function Settings() {
   const setUiLanguage = useGermanStore((s) => s.settings.setUiLanguage);
   const setTeachingProfile = useGermanStore((s) => s.settings.setTeachingProfile);
   const resetOnboarding = useGermanStore((s) => s.settings.resetOnboarding);
+  const setNotificationsEnabled = useGermanStore((s) => s.settings.setNotificationsEnabled);
+  const setDailyReminderTime = useGermanStore((s) => s.settings.setDailyReminderTime);
+
+  async function handleToggleNotifications() {
+    if (!settings.notificationsEnabled) {
+      const permission =
+        typeof Notification !== 'undefined' ? await Notification.requestPermission() : 'denied';
+      if (permission !== 'granted') return;
+    }
+    setNotificationsEnabled(!settings.notificationsEnabled);
+  }
 
   const plan = settings.level ? buildPlan({ level: settings.level, fachbereich: settings.fachbereich }) : null;
 
@@ -85,6 +96,32 @@ export default function Settings() {
             ))}
           </div>
         </div>
+      </Card>
+
+      <Card>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-bold text-white">{t('settings.reminders')}</h2>
+            <p className="text-xs text-slate-400 mt-1">{t('settings.remindersHint')}</p>
+          </div>
+          <button
+            onClick={handleToggleNotifications}
+            aria-label={t('settings.reminders')}
+            className={`shrink-0 h-7 w-12 rounded-full flex items-center px-1 transition-colors
+              ${settings.notificationsEnabled ? 'bg-violet-gradient justify-end' : 'bg-surface-raised justify-start'}`}
+          >
+            <span className="h-5 w-5 rounded-full bg-white" />
+          </button>
+        </div>
+        {settings.notificationsEnabled && (
+          <input
+            type="time"
+            value={settings.dailyReminderTime}
+            onChange={(e) => setDailyReminderTime(e.target.value)}
+            className="mt-3 w-full rounded-2xl bg-surface-raised/60 border border-surface-border px-4 py-2.5
+              text-slate-100 outline-none focus:border-violet-500/40"
+          />
+        )}
       </Card>
 
       {plan && (

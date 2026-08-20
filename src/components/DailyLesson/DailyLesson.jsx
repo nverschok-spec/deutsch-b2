@@ -24,6 +24,7 @@ export default function DailyLesson({ onClose }) {
   const setBriefing = useGermanStore((s) => s.briefing.setBriefing);
   const addXp = useGermanStore((s) => s.progress.addXp);
   const markCompletedToday = useGermanStore((s) => s.lesson.markCompletedToday);
+  const recordTopic = useGermanStore((s) => s.weakSpots.recordTopic);
 
   const [stepIndex, setStepIndex] = useState(0);
   const step = STEPS[stepIndex];
@@ -52,6 +53,7 @@ export default function DailyLesson({ onClose }) {
     try {
       const data = await askClaude('upgradeSentence', { sentence: sentence.trim() });
       setUpgradeResult(data);
+      data.changes?.forEach((change) => recordTopic(change.topic));
       setUpgradeStatus('idle');
     } catch {
       setUpgradeStatus('error');
@@ -71,6 +73,7 @@ export default function DailyLesson({ onClose }) {
         userTurn: dialogueText.trim(),
       });
       setDialogueReply(data);
+      if (data.correction) recordTopic(data.correctionTopic);
       setDialogueStatus('idle');
     } catch {
       setDialogueStatus('error');
