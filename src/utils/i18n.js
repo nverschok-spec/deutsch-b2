@@ -86,6 +86,11 @@ const STRINGS = {
   'pin.forgot': { ru: 'Забыл PIN?', de: 'PIN vergessen?' },
   'pin.answerWrong': { ru: 'Неверный ответ', de: 'Falsche Antwort' },
   'pin.back': { ru: 'Назад', de: 'Zurück' },
+  'pin.setupTitle': { ru: 'Защити приложение PIN-кодом', de: 'Schütze die App mit einem PIN' },
+  'pin.setupSubtitle': {
+    ru: 'Это твой личный трекер обучения — установи 4-значный PIN, чтобы никто посторонний в него не заглянул.',
+    de: 'Das ist dein persönlicher Lern-Tracker — leg einen 4-stelligen PIN fest, damit niemand sonst hineinschauen kann.',
+  },
 
   'onboarding.welcome': { ru: 'Прежде чем начать', de: 'Bevor wir beginnen' },
   'onboarding.levelQuestion': { ru: 'Какой у тебя сейчас уровень немецкого?', de: 'Wie ist dein aktuelles Deutschniveau?' },

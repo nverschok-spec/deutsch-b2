@@ -7,8 +7,9 @@ const inputClass =
   'w-full rounded-2xl bg-surface-raised/60 border border-surface-border px-4 py-3 ' +
   'text-slate-100 placeholder:text-slate-500 outline-none focus:border-violet-500/40';
 
-// Форма установки/смены PIN — используется и в Settings, и (позже) в PinLock
-// для смены забытого PIN после успешного секретного вопроса.
+// Форма установки/смены PIN — используется в Settings (там есть Cancel) и в
+// MandatoryPinSetup при самом первом запуске (там Cancel нет — onCancel не
+// передан, кнопка просто не рендерится: PIN на первом входе обязателен).
 export default function PinSetupForm({ onDone, onCancel }) {
   const t = useT();
   const setPin = useGermanStore((s) => s.settings.setPin);
@@ -68,9 +69,11 @@ export default function PinSetupForm({ onDone, onCancel }) {
         <PrimaryButton onClick={handleSave} className="flex-1 text-sm">
           {t('settings.save')}
         </PrimaryButton>
-        <SecondaryButton onClick={onCancel} className="flex-1 text-sm">
-          {t('settings.cancel')}
-        </SecondaryButton>
+        {onCancel && (
+          <SecondaryButton onClick={onCancel} className="flex-1 text-sm">
+            {t('settings.cancel')}
+          </SecondaryButton>
+        )}
       </div>
     </div>
   );
