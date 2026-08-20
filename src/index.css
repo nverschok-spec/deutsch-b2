@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background: radial-gradient(circle at 50% 0%, theme('colors.bg.base') 0%, theme('colors.bg.deep') 55%);
+    min-height: 100dvh;
+  }
+
+  /* Безопасные зоны для iOS (челка/home indicator) — важно для PWA standalone */
+  #root {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* iOS Safari зумит страницу при фокусе на инпуте с font-size < 16px —
+     держим все текстовые поля минимум на 16px, что бы ни было в utility-классах. */
+  input,
+  textarea {
+    font-size: 16px;
+  }
+
+  /* CLAUDE.md п.8: анимации должны уважать system-level "меньше движения" */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Карточка — базовая поверхность для всех модулей дашборда */
+  .glass-card {
+    @apply bg-surface/90 backdrop-blur-md border border-surface-border rounded-3xl shadow-glass;
+  }
+
+  .glass-card-raised {
+    @apply bg-surface-raised/90 backdrop-blur-md border border-surface-border rounded-3xl shadow-glass;
+  }
+
+  /* Основная CTA-кнопка с фиолетово-индиго градиентом */
+  .btn-primary {
+    @apply bg-violet-gradient text-white font-semibold rounded-2xl px-5 py-3
+      shadow-glow-violet active:scale-[0.98] transition-transform duration-200
+      disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-secondary {
+    @apply bg-surface-raised border border-surface-border text-slate-100 font-medium
+      rounded-2xl px-5 py-3 active:scale-[0.98] transition-transform duration-200;
+  }
+
+  /* Немецкие термины / B2-конструкции — фирменная подсветка из макета */
+  .term-glow {
+    @apply text-glow font-serif;
+    text-shadow: 0 0 18px rgba(129, 140, 248, 0.35);
+  }
+
+  /* Нижняя закреплённая панель ввода (голос/текст) — общая для всего приложения,
+     а не отдельного модуля: в макете она видна на любом скролл-положении. */
+  .floating-input-bar {
+    @apply fixed bottom-0 left-0 right-0 z-30 backdrop-blur-xl bg-bg-deep/85
+      border-t border-surface-border px-4 pt-3;
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  }
+
+  .badge-high {
+    @apply bg-rose-500/15 text-rose-400 border border-rose-500/20 rounded-full px-3 py-1 text-xs font-medium;
+  }
+
+  .badge-medium {
+    @apply bg-amber-500/15 text-amber-400 border border-amber-500/20 rounded-full px-3 py-1 text-xs font-medium;
+  }
+
+  .badge-low {
+    @apply bg-blue-500/15 text-blue-400 border border-blue-500/20 rounded-full px-3 py-1 text-xs font-medium;
+  }
+}

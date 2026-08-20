@@ -1,0 +1,18 @@
+{
+  "name": "Deutsch B2 — от B1 к Umschulung",
+  "short_name": "Deutsch B2",
+  "description": "Тренажёр немецкого языка: грамматика B2, разговорная практика, Fachsprache для Umschulung",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B0D1B",
+  "theme_color": "#0B0D1B",
+  "lang": "ru",
+  "dir": "ltr",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
