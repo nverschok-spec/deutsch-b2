@@ -67,12 +67,25 @@
     text-shadow: 0 0 18px rgba(129, 140, 248, 0.35);
   }
 
+  /* Обёртка для всего нижнего "дока": BottomNav + floating-input-bar едут
+     вместе одним fixed-блоком, поэтому input-bar сам больше не fixed —
+     это нужно, т.к. высота input-bar динамическая (растёт с lastReply/спиннером),
+     и BottomNav должен всегда сидеть прямо над ним, а не на фиксированном отступе. */
+  .bottom-dock {
+    @apply fixed bottom-0 left-0 right-0 z-30 mx-auto max-w-md flex flex-col;
+  }
+
   /* Нижняя закреплённая панель ввода (голос/текст) — общая для всего приложения,
      а не отдельного модуля: в макете она видна на любом скролл-положении. */
   .floating-input-bar {
-    @apply fixed bottom-0 left-0 right-0 z-30 backdrop-blur-xl bg-bg-deep/85
-      border-t border-surface-border px-4 pt-3;
+    @apply backdrop-blur-xl bg-bg-deep/85 border-t border-surface-border px-4 pt-3;
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  }
+
+  /* Нижняя навигация между дашбордом и полноэкранными модулями (Grammar/Cards).
+     Сидит над floating-input-bar внутри общего .bottom-dock. */
+  .bottom-nav-bar {
+    @apply backdrop-blur-xl bg-bg-deep/90 border-t border-surface-border px-2 pt-2 flex justify-between;
   }
 
   .badge-high {

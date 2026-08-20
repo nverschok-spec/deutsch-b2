@@ -1,8 +1,10 @@
 node_modules
 dist
 dist-ssr
+dev-dist
 *.local
 .env
 .env.local
 .vercel
 .DS_Store
+desktop.ini

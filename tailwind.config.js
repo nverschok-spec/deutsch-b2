@@ -57,6 +57,8 @@ export default {
       spacing: {
         // Высота нижней floating input-панели + safe-area на iOS
         'input-bar': '6.5rem',
+        // Высота BottomNav над input-панелью (см. .bottom-nav-bar в index.css)
+        'nav-bar': '4rem',
       },
       animation: {
         'pulse-slow': 'pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
