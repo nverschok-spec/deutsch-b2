@@ -8,3 +8,5 @@ dev-dist
 .vercel
 .DS_Store
 desktop.ini
+
+.vercel

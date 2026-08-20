@@ -97,12 +97,17 @@ export default async function handler(req) {
     const data = await anthropicRes.json();
     const text = data?.content?.[0]?.text ?? '{}';
 
+    // Модель иногда оборачивает JSON в markdown code-fence (```json ... ```),
+    // несмотря на "Antworte ausschließlich als JSON" в промпте — снимаем его
+    // перед парсингом, иначе JSON.parse падает и фронт получает {raw} вместо
+    // ожидаемых полей.
+    const fenceMatch = text.trim().match(/^```(?:json)?\s*([\s\S]*?)\s*```$/);
+    const jsonText = fenceMatch ? fenceMatch[1] : text;
+
     let parsed;
     try {
-      parsed = JSON.parse(text);
+      parsed = JSON.parse(jsonText);
     } catch {
-      // Модель иногда оборачивает JSON в текст — отдаём как есть,
-      // фронт должен уметь обработать fallback-строку.
       parsed = { raw: text };
     }
 
