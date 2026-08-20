@@ -3,6 +3,7 @@ import Card from '../common/Card.jsx';
 import Spinner from '../common/Spinner.jsx';
 import { askClaude } from '../../api/claude.js';
 import { useVocabCards, useGermanStore } from '../../store/useGermanStore.js';
+import { useT } from '../../utils/i18n.js';
 
 const BADGE_CLASS = { High: 'badge-high', Medium: 'badge-medium', Low: 'badge-low' };
 
@@ -16,6 +17,7 @@ export default function WortschatzKarten() {
   const toggleLearned = useGermanStore((s) => s.vocab.toggleLearned);
   const [newWord, setNewWord] = useState('');
   const [status, setStatus] = useState('idle');
+  const t = useT();
 
   async function handleAddWord() {
     if (!newWord.trim()) return;
@@ -34,7 +36,7 @@ export default function WortschatzKarten() {
   return (
     <Card className="animate-slide-up">
       <div className="flex items-center justify-between mb-1">
-        <h2 className="text-lg font-bold text-white">Wortschatz-Karten</h2>
+        <h2 className="text-lg font-bold text-white">{t('wortschatz.title')}</h2>
       </div>
       <p className="text-xs text-slate-400 mb-3">IT-Fachsprache</p>
 
@@ -65,7 +67,7 @@ export default function WortschatzKarten() {
             <span className={BADGE_CLASS[card.priority] ?? 'badge-low'}>{card.priority ?? 'Low'}</span>
           </div>
         ))}
-        {cards.length === 0 && <p className="text-sm text-slate-500 text-center py-4">Пока нет слов — добавь первое.</p>}
+        {cards.length === 0 && <p className="text-sm text-slate-500 text-center py-4">{t('wortschatz.empty')}</p>}
       </div>
 
       <div className="mt-3 flex gap-2">
@@ -73,7 +75,7 @@ export default function WortschatzKarten() {
           value={newWord}
           onChange={(e) => setNewWord(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleAddWord()}
-          placeholder="Добавь слово, напр. Verantwortung"
+          placeholder={t('cards.addPlaceholder')}
           className="flex-1 rounded-2xl bg-surface-raised/60 border border-surface-border px-3 py-2.5
             text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-violet-500/40"
         />
@@ -81,7 +83,7 @@ export default function WortschatzKarten() {
           {status === 'loading' ? <Spinner label="" /> : '+'}
         </button>
       </div>
-      {status === 'error' && <p className="text-xs text-rose-400 mt-2">Не получилось добавить слово. Попробуй ещё раз.</p>}
+      {status === 'error' && <p className="text-xs text-rose-400 mt-2">{t('wortschatz.error')}</p>}
     </Card>
   );
 }

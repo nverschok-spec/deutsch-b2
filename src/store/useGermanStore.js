@@ -54,6 +54,16 @@ export const useGermanStore = create()(
           ttsRate: state.settings.ttsRate,
           dialogueScenario: state.settings.dialogueScenario,
           dailyReminderTime: state.settings.dailyReminderTime,
+          uiLanguage: state.settings.uiLanguage,
+          teachingProfile: state.settings.teachingProfile,
+          onboardingCompleted: state.settings.onboardingCompleted,
+          level: state.settings.level,
+          fachbereich: state.settings.fachbereich,
+          pinHash: state.settings.pinHash,
+          recoveryQuestion: state.settings.recoveryQuestion,
+          recoveryAnswerHash: state.settings.recoveryAnswerHash,
+          // isUnlocked НЕ персистится намеренно — каждый холодный старт
+          // снова требует PIN, если он задан (см. createSettingsSlice.js).
         },
         briefing: {
           date: state.briefing.date,

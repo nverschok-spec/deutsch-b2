@@ -4,6 +4,7 @@ import { PrimaryButton } from '../common/Button.jsx';
 import Spinner from '../common/Spinner.jsx';
 import { askClaude, ClaudeApiError } from '../../api/claude.js';
 import { useGermanStore } from '../../store/useGermanStore.js';
+import { useT } from '../../utils/i18n.js';
 
 // B2SentenceUpgrader — пользователь вводит простое предложение → ИИ
 // переписывает на B2. Сверху итог одной строкой (как в макете), полный
@@ -14,6 +15,7 @@ export default function B2SentenceUpgrader() {
   const [status, setStatus] = useState('idle'); // idle | loading | error
   const [showDetails, setShowDetails] = useState(false);
   const addXp = useGermanStore((s) => s.progress.addXp);
+  const t = useT();
 
   async function handleUpgrade() {
     if (!input.trim()) return;
@@ -33,7 +35,7 @@ export default function B2SentenceUpgrader() {
 
   return (
     <Card className="animate-slide-up">
-      <h2 className="text-lg font-bold text-white mb-3">B2 Sentence Upgrader</h2>
+      <h2 className="text-lg font-bold text-white mb-3">{t('upgrader.title')}</h2>
 
       <input
         value={input}
@@ -55,10 +57,10 @@ export default function B2SentenceUpgrader() {
         </div>
       )}
 
-      {status === 'error' && <p className="text-sm text-rose-400 mt-2">Не получилось получить ответ. Попробуй ещё раз.</p>}
+      {status === 'error' && <p className="text-sm text-rose-400 mt-2">{t('upgrader.error')}</p>}
 
       <PrimaryButton onClick={handleUpgrade} disabled={status === 'loading'} className="mt-4 w-full">
-        {status === 'loading' ? <Spinner label="Analyzing…" /> : 'Analyze'}
+        {status === 'loading' ? <Spinner label={t('upgrader.analyzing')} /> : t('upgrader.analyze')}
       </PrimaryButton>
 
       {result?.changes?.length > 0 && (
@@ -67,7 +69,7 @@ export default function B2SentenceUpgrader() {
             onClick={() => setShowDetails((v) => !v)}
             className="mt-3 text-xs text-slate-400 underline"
           >
-            {showDetails ? 'Скрыть разбор' : 'Показать разбор ▾'}
+            {showDetails ? t('upgrader.hideDetails') : t('upgrader.showDetails')}
           </button>
           {showDetails && (
             <div className="mt-3 flex flex-col gap-3 animate-fade-in">

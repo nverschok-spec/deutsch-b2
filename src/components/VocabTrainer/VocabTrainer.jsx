@@ -4,6 +4,7 @@ import { PrimaryButton, SecondaryButton } from '../common/Button.jsx';
 import Spinner from '../common/Spinner.jsx';
 import { askClaude } from '../../api/claude.js';
 import { useGermanStore, useDueVocabCards } from '../../store/useGermanStore.js';
+import { useT } from '../../utils/i18n.js';
 
 // Модуль 4: добавление слова (ИИ дотягивает артикль/plural/пример) +
 // SRS-повторение карточек, которые "созрели" (см. slices/createVocabSlice.js).
@@ -15,6 +16,7 @@ export default function VocabTrainer() {
   const addXp = useGermanStore((s) => s.progress.addXp);
   const dueCards = useDueVocabCards();
   const [revealIndex, setRevealIndex] = useState(null);
+  const t = useT();
 
   async function handleAddWord() {
     if (!newWord.trim()) return;
@@ -39,8 +41,8 @@ export default function VocabTrainer() {
   return (
     <div className="flex flex-col gap-4">
       <header>
-        <h1 className="text-xl font-bold">Карточки</h1>
-        <p className="text-sm text-slate-400">{dueCards.length} на повторение сегодня</p>
+        <h1 className="text-xl font-bold">{t('cards.title')}</h1>
+        <p className="text-sm text-slate-400">{dueCards.length} {t('cards.dueToday')}</p>
       </header>
 
       <Card>
@@ -49,7 +51,7 @@ export default function VocabTrainer() {
             value={newWord}
             onChange={(e) => setNewWord(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAddWord()}
-            placeholder="Добавь слово, напр. Verantwortung"
+            placeholder={t('cards.addPlaceholder')}
             className="flex-1 bg-transparent outline-none placeholder:text-slate-500"
           />
           <PrimaryButton onClick={handleAddWord} disabled={status === 'loading'}>
@@ -79,13 +81,13 @@ export default function VocabTrainer() {
               {isRevealed && (
                 <div className="mt-3 grid grid-cols-3 gap-2">
                   <SecondaryButton onClick={() => handleReview(card.id, 1)} className="text-xs text-rose-300">
-                    Забыл
+                    {t('cards.forgot')}
                   </SecondaryButton>
                   <SecondaryButton onClick={() => handleReview(card.id, 3)} className="text-xs text-amber-300">
-                    Сложно
+                    {t('cards.hard')}
                   </SecondaryButton>
                   <SecondaryButton onClick={() => handleReview(card.id, 5)} className="text-xs text-violet-300">
-                    Легко
+                    {t('cards.easy')}
                   </SecondaryButton>
                 </div>
               )}
@@ -93,7 +95,7 @@ export default function VocabTrainer() {
           );
         })}
         {dueCards.length === 0 && (
-          <p className="text-sm text-slate-500 text-center py-6">Все карточки повторены. Загляни завтра 🎉</p>
+          <p className="text-sm text-slate-500 text-center py-6">{t('cards.allDone')}</p>
         )}
       </div>
     </div>

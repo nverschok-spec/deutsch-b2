@@ -3,6 +3,7 @@ import CircularProgress from '../common/CircularProgress.jsx';
 import LinearProgress from '../common/LinearProgress.jsx';
 import { useGermanStore } from '../../store/useGermanStore.js';
 import { xpToLevel } from '../../utils/level.js';
+import { useT } from '../../utils/i18n.js';
 
 // MeinB2Fortschritt — вся статистика реальная, не заглушка:
 // кольцо = xpToLevel(progress.xp), полоски = фактические счётчики из стора
@@ -17,22 +18,23 @@ export default function MeinB2Fortschritt() {
 
   const { label, percent } = xpToLevel(xp);
   const conversationMinutes = Math.floor(conversationSeconds / 60);
+  const t = useT();
 
   return (
     <Card className="animate-slide-up">
-      <h2 className="text-lg font-bold text-white mb-4">Mein B2 Fortschritt</h2>
+      <h2 className="text-lg font-bold text-white mb-4">{t('progress.title')}</h2>
 
       <div className="flex items-center gap-5">
         <CircularProgress percent={percent} size={128} strokeWidth={11}>
           <div className="text-center">
             <p className="text-2xl font-bold text-white">{percent}%</p>
-            <p className="text-[11px] text-slate-400 mt-0.5">Уровень {label}</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">{t('progress.level')} {label}</p>
           </div>
         </CircularProgress>
 
         <div className="flex-1 flex flex-col gap-4">
-          <LinearProgress label="Выученные N-V-Verbindungen" current={learnedCount} target={NV_TARGET} />
-          <LinearProgress label="Минуты разговора" current={conversationMinutes} target={CONVERSATION_TARGET_MIN} unit=" мин" />
+          <LinearProgress label={t('progress.nvLearned')} current={learnedCount} target={NV_TARGET} />
+          <LinearProgress label={t('progress.conversationMinutes')} current={conversationMinutes} target={CONVERSATION_TARGET_MIN} unit={t('progress.min')} />
         </div>
       </div>
     </Card>

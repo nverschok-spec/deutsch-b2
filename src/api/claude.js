@@ -3,6 +3,11 @@
 // и `payload` (данные для промпта). Сервер (api/claude.js) знает, как
 // собрать system-prompt под конкретную задачу — фронт не должен ничего
 // знать про сами промпты, только про формат ответа.
+//
+// teachingProfile/uiLanguage (Settings → "Как тебя учить") подмешиваются сюда
+// один раз для всех задач, а не в каждом компоненте по отдельности — иначе
+// любой новый вызов askClaude рискует забыть про профиль обучения.
+import { useGermanStore } from '../store/useGermanStore.js';
 
 /**
  * @param {'upgradeSentence'|'grammarAnalysis'|'dialogueTurn'|'vocabEnrich'|'dailyBriefing'} task
@@ -10,10 +15,11 @@
  * @param {{ signal?: AbortSignal }} [opts]
  */
 export async function askClaude(task, payload, opts = {}) {
+  const { teachingProfile, uiLanguage } = useGermanStore.getState().settings;
   const res = await fetch('/api/claude', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ task, payload }),
+    body: JSON.stringify({ task, payload: { ...payload, teachingProfile, uiLanguage } }),
     signal: opts.signal,
   });
 

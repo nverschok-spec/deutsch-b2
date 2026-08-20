@@ -12,31 +12,62 @@ export const config = { runtime: 'edge' }; // быстрый холодный с
 
 const MODEL = 'claude-haiku-4-5';
 
+// Профиль обучения (Settings → "Как тебя учить") и язык интерфейса влияют на
+// то, КАК ИИ ведёт себя в каждом промпте — собираем это в один блок инструкций,
+// который каждая задача ниже подставляет в свой system-prompt.
+function teachingNote(payload) {
+  const tp = payload?.teachingProfile || {};
+  const lang = payload?.uiLanguage === 'de' ? 'Deutsch' : 'Russisch';
+
+  const focus =
+    {
+      grammar: 'Lege besonderen Fokus auf Grammatik-Feinheiten.',
+      vocab: 'Lege besonderen Fokus auf Wortschatzerweiterung und Fachbegriffe.',
+      speaking: 'Lege besonderen Fokus auf natürliche, mündliche Ausdrucksweise.',
+    }[tp.focus] || '';
+
+  const strictness =
+    {
+      gentle: 'Korrigiere nur grobe Fehler, sei nachsichtig bei Kleinigkeiten.',
+      strict: 'Korrigiere auch kleine Fehler konsequent und genau.',
+    }[tp.strictness] || '';
+
+  const tone =
+    tp.tone === 'professional'
+      ? 'Antworte in einem sachlichen, professionellen Ton.'
+      : 'Antworte in einem freundlichen, ermutigenden Ton.';
+
+  return `Lernprofil: ${[focus, strictness, tone].filter(Boolean).join(' ')} Erklärungen auf ${lang}.`;
+}
+
 const PROMPTS = {
   upgradeSentence: {
-    system: `Du bist ein erfahrener Deutschlehrer (C2), spezialisiert auf B1→B2 Sprachcoaching.
+    system: (payload) => `Du bist ein erfahrener Deutschlehrer (C2), spezialisiert auf B1→B2 Sprachcoaching.
 Der Nutzer schreibt einen einfachen Satz (A2/B1). Deine Aufgabe:
 1) Formuliere ihn auf B2-Niveau um — nutze wo passend: Nomen-Verb-Verbindungen,
    Passiv/Zustandspassiv, Konjunktiv II, Nebensätze (obwohl, dadurch dass, je... desto).
-2) Erkläre knapp auf Russisch, WAS sich geändert hat und WARUM es professioneller klingt.
+2) Erkläre knapp, WAS sich geändert hat und WARUM es professioneller klingt.
+${teachingNote(payload)}
 Antworte ausschließlich als JSON: { "upgraded": string, "changes": [{ "original": string, "improved": string, "explanationRu": string }] }`,
   },
   grammarAnalysis: {
-    system: `Du bist ein Grammatik-Analysewerkzeug für Deutschlerner auf B2-Niveau.
+    system: (payload) => `Du bist ein Grammatik-Analysewerkzeug für Deutschlerner auf B2-Niveau.
 Analysiere den gegebenen Satz/Text: Satzklammer (Position von Verb/Präfix),
 Verben mit Präpositionen (Rektion), Kasus (Dativ/Akkusativ/Genitiv) mit Begründung.
+${teachingNote(payload)}
 Antworte ausschließlich als JSON:
 { "satzklammer": {...}, "verbenMitPraepositionen": [...], "kasus": [...] }`,
   },
   dialogueTurn: {
-    system: `Du bist Gesprächspartner in einem Rollenspiel für einen Deutschlerner (Ziel: B2, Kontext: Umschulung in Deutschland).
+    system: (payload) => `Du bist Gesprächspartner in einem Rollenspiel für einen Deutschlerner (Ziel: B2, Kontext: Umschulung in Deutschland).
 Der Modus wird im payload.scenario übergeben (Vorstellungsgespräch / Kollegengespräch / Jobcenter / Fachthema).
 Antworte auf Deutsch in der eingestellten Schwierigkeit (payload.difficulty: B1|B2).
-Falls die letzte Nutzeräußerung Grammatikfehler enthält, korrigiere sie kurz und freundlich, dann führe den Dialog fort.
+Falls die letzte Nutzeräußerung Grammatikfehler enthält, korrigiere sie kurz, dann führe den Dialog fort.
+${teachingNote(payload)}
 Antworte ausschließlich als JSON: { "reply": string, "correction": string|null, "hint": string|null }`,
   },
   vocabEnrich: {
-    system: `Du reicherst ein deutsches Wort für eine Vokabelkarte an (Zielniveau B2, Kontext: Umschulung/Fachsprache).
+    system: () => `Du reicherst ein deutsches Wort für eine Vokabelkarte an (Zielniveau B2, Kontext: Umschulung/Fachsprache).
 Gib Artikel (der/die/das, falls Nomen), Plural (falls zutreffend), eine B2-Kontextbedeutung,
 einen Beispielsatz auf B2-Niveau, eine kurze Fachbereich-Kategorie (z.B. "IT-Fachsprache",
 "Pflege-Fachsprache", "Buchhaltung", oder "Allgemein B2" falls nicht fachspezifisch) und eine
@@ -44,8 +75,9 @@ Priorität (High/Medium/Low — wie oft das Wort in Bewerbungsgesprächen/Berufs
 Antworte ausschließlich als JSON: { "article": string|null, "plural": string|null, "meaningRu": string, "example": string, "category": string, "priority": "High"|"Medium"|"Low" }`,
   },
   dailyBriefing: {
-    system: `Erstelle ein kurzes tägliches B2-Briefing für einen Deutschlerner: ein Wort des Tages (mit Artikel/Plural),
+    system: (payload) => `Erstelle ein kurzes tägliches B2-Briefing für einen Deutschlerner: ein Wort des Tages (mit Artikel/Plural),
 eine Nomen-Verb-Verbindung des Tages, und 3 Multiple-Choice-Testfragen (1 Minute Test).
+${teachingNote(payload)}
 Antworte ausschließlich als JSON: { "wordOfDay": {...}, "nvVerbindung": {...}, "quiz": [...] }`,
   },
 };
@@ -84,7 +116,7 @@ export default async function handler(req) {
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 1024,
-        system: prompt.system,
+        system: prompt.system(payload),
         messages: [{ role: 'user', content: JSON.stringify(payload ?? {}) }],
       }),
     });

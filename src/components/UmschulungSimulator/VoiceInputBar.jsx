@@ -4,12 +4,13 @@ import { askClaude } from '../../api/claude.js';
 import { useGermanStore } from '../../store/useGermanStore.js';
 import { useSpeechRecognition } from '../../hooks/useSpeechRecognition.js';
 import { speak } from '../../utils/tts.js';
+import { useT } from '../../utils/i18n.js';
 
-const SCENARIOS = {
-  interview: 'Собеседование',
-  colleague: 'С коллегой',
-  jobcenter: 'Jobcenter',
-  professional: 'Fachthema',
+const SCENARIO_KEYS = {
+  interview: 'scenario.interview',
+  colleague: 'scenario.colleague',
+  jobcenter: 'scenario.jobcenter',
+  professional: 'scenario.professional',
 };
 
 // VoiceInputBar — фиксированная нижняя панель на ВСЁ приложение (не только
@@ -26,6 +27,7 @@ export default function VoiceInputBar() {
   const [text, setText] = useState('');
   const [lastReply, setLastReply] = useState(null); // { text, correction, hint }
   const [status, setStatus] = useState('idle');
+  const t = useT();
 
   const { isListening, transcript, start, stop, isSupported } = useSpeechRecognition({
     lang: settings.voiceLang,
@@ -69,15 +71,15 @@ export default function VoiceInputBar() {
   return (
     <div className="floating-input-bar">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-bold text-white">UmschulungSimulator</p>
+        <p className="text-sm font-bold text-white">{t('voicebar.title')}</p>
         <select
           value={settings.dialogueScenario}
           onChange={(e) => setDialogueScenario(e.target.value)}
           className="bg-transparent text-xs text-violet-400 outline-none"
         >
-          {Object.entries(SCENARIOS).map(([key, label]) => (
+          {Object.entries(SCENARIO_KEYS).map(([key, labelKey]) => (
             <option key={key} value={key} className="bg-surface text-slate-100">
-              {label}
+              {t(labelKey)}
             </option>
           ))}
         </select>
@@ -85,10 +87,10 @@ export default function VoiceInputBar() {
 
       {status === 'loading' && (
         <div className="mt-2">
-          <Spinner label="ИИ отвечает…" />
+          <Spinner label={t('voicebar.thinking')} />
         </div>
       )}
-      {status === 'error' && <p className="mt-2 text-xs text-rose-400">Ошибка соединения. Попробуй ещё раз.</p>}
+      {status === 'error' && <p className="mt-2 text-xs text-rose-400">{t('voicebar.error')}</p>}
       {lastReply && status === 'idle' && (
         <div className="mt-2 rounded-2xl bg-surface-raised/60 px-3 py-2 animate-fade-in">
           <p className="text-sm text-slate-200">{lastReply.text}</p>
@@ -102,7 +104,7 @@ export default function VoiceInputBar() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleTurn(text)}
-          placeholder="Type message..."
+          placeholder={t('voicebar.placeholder')}
           className="flex-1 rounded-full bg-surface-raised/70 border border-surface-border px-4 py-3
             text-slate-100 placeholder:text-slate-500 outline-none focus:border-violet-500/40"
         />
@@ -120,10 +122,10 @@ export default function VoiceInputBar() {
       </div>
       <p className="text-center text-[11px] text-slate-500 -mt-1 pb-1">
         {!isSupported
-          ? 'Голосовой ввод недоступен в этом браузере'
+          ? t('voicebar.notSupported')
           : isListening
-            ? transcript || 'Слушаю…'
-            : 'Tap to Speak (Нажмите и говорите)'}
+            ? transcript || t('voicebar.listening')
+            : t('voicebar.tapToSpeak')}
       </p>
     </div>
   );
